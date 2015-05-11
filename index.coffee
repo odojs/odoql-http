@@ -1,12 +1,12 @@
 request = require 'superagent'
 
 module.exports = (exe, params) ->
-  getparams = exe.build params.__params
+  getdata = exe.build params.__source
   (cb) ->
-    getparams (err, params) ->
+    getdata (err, data) ->
       return cb err if err?
       request
-        .get params
+        .get data
         .buffer()
         .end (err, res) ->
           return cb err if err?

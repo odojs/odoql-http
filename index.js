@@ -4,14 +4,14 @@ var request;
 request = require('superagent');
 
 module.exports = function(exe, params) {
-  var getparams;
-  getparams = exe.build(params.__params);
+  var getdata;
+  getdata = exe.build(params.__source);
   return function(cb) {
-    return getparams(function(err, params) {
+    return getdata(function(err, data) {
       if (err != null) {
         return cb(err);
       }
-      return request.get(params).buffer().end(function(err, res) {
+      return request.get(data).buffer().end(function(err, res) {
         if (err != null) {
           return cb(err);
         }
