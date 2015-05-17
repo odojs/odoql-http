@@ -1,14 +1,19 @@
 request = require 'superagent'
 
-module.exports = (exe, params) ->
-  getdata = exe.build params.__source
-  (cb) ->
-    getdata (err, data) ->
-      return cb err if err?
-      request
-        .get data
-        .buffer()
-        .end (err, res) ->
+module.exports =
+  params:
+    http: (exe, params) ->
+      getsource = exe.build params.__s
+      (cb) ->
+        getsource (err, source) ->
           return cb err if err?
-          return cb new Error res.text unless res.ok
-          cb null, res.text
+          #timer = new Date().getTime()
+          request
+            .get source
+            .buffer()
+            .end (err, res) ->
+              #timer = new Date().getTime() - timer
+              #console.log "#{timer}ms #{source}"
+              return cb err if err?
+              return cb new Error res.text unless res.ok
+              cb null, res.text

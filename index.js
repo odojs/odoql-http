@@ -3,23 +3,27 @@ var request;
 
 request = require('superagent');
 
-module.exports = function(exe, params) {
-  var getdata;
-  getdata = exe.build(params.__source);
-  return function(cb) {
-    return getdata(function(err, data) {
-      if (err != null) {
-        return cb(err);
-      }
-      return request.get(data).buffer().end(function(err, res) {
-        if (err != null) {
-          return cb(err);
-        }
-        if (!res.ok) {
-          return cb(new Error(res.text));
-        }
-        return cb(null, res.text);
-      });
-    });
-  };
+module.exports = {
+  params: {
+    http: function(exe, params) {
+      var getsource;
+      getsource = exe.build(params.__s);
+      return function(cb) {
+        return getsource(function(err, source) {
+          if (err != null) {
+            return cb(err);
+          }
+          return request.get(source).buffer().end(function(err, res) {
+            if (err != null) {
+              return cb(err);
+            }
+            if (!res.ok) {
+              return cb(new Error(res.text));
+            }
+            return cb(null, res.text);
+          });
+        });
+      };
+    }
+  }
 };
