@@ -10,7 +10,6 @@ module.exports =
           #timer = new Date().getTime()
           request
             .get source
-            .buffer()
             .end (err, res) ->
               #timer = new Date().getTime() - timer
               #console.log "#{timer}ms #{source}"
