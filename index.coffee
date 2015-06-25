@@ -16,10 +16,28 @@ module.exports =
           query = if parts[1]? then parts[1] else ''  # Empty string ignored in query()
           query = query.split('#')[0]  # Not removed in query()
 
-          request
-            .get url
-            .query query
-            .end (err, res) ->
-              return cb err if err?
-              return cb new Error res.text unless res.ok
-              cb null, res.text
+          maxAttempts = 1
+          maxAttempts ?= params.__p.attempts
+
+          retryRequests url, query, maxAttempts, cb
+
+
+retryRequests = (url, query, maxAttempts, cb) ->
+  nAttempts = 0
+  errorMessage = ''
+
+  do doRequest = ->
+    if nAttempts > maxAttempts
+      return cb new Error "Max retries reached: #{errorMessage}"
+    request
+      .get url
+      .query query
+      .end do -> (err, res) ->  # Closure is an attempt to avoid 'double callback' superagent warning (https://github.com/visionmedia/superagent/issues/313)
+        nAttempts += 1
+        if err or not res.ok
+          errorMessage ?= res.status
+          errorMessage ?= res.error.text
+          errorMessage ?= err.code
+          return doRequest()
+        cb null, res.text
+
