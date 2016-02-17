@@ -28,7 +28,7 @@ retryRequests = (url, query, maxAttempts, cb) ->
 
   do doRequest = ->
     if nAttempts > maxAttempts
-      return cb new Error "Max retries reached: #{errorMessage}"
+      return cb new Error "Max retries reached: #{url}?#{query}\n#{errorMessage}"
     request
       .get url
       .query query
